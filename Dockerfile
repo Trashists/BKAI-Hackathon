@@ -26,6 +26,7 @@ WORKDIR /spoken-norm-taggen
 
 RUN curl -O http://27.71.27.81:3344/SLU-20230922T151745Z-001.zip
 RUN unzip SLU-20230922T151745Z-001.zip
-ADD tokenizer ./tokenizer
+COPY tokenizer/base_sep_sfx.pkl ./base_sep_sfx.pkl
+COPY tokenizer/UITws_vi.py ./UITws_vi.py
 COPY test.py ./test.py
 RUN python test.py
