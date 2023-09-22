@@ -1,7 +1,6 @@
 from transformers import Wav2Vec2ProcessorWithLM, Wav2Vec2ForCTC
 from importlib.machinery import SourceFileLoader
 from huggingface_hub import hf_hub_download
-from huggingface_hub import notebook_login
 
 processor = Wav2Vec2ProcessorWithLM.from_pretrained("nguyenvulebinh/wav2vec2-base-vi-vlsp2020")
 
@@ -37,21 +36,6 @@ def map_to_result(batch):
 
 text_data = data.map(map_to_result)
 
-from IPython.display import display, HTML
-import random
-import pandas as pd
-import numpy as np
-def show_random_elements(dataset, num_examples=5):
-    assert num_examples <= len(dataset), "Can't pick more elements than there are in the dataset."
-    picks = []
-    for _ in range(num_examples):
-        pick = random.randint(0, len(dataset)-1)
-        while pick in picks:
-            pick = random.randint(0, len(dataset)-1)
-        picks.append(pick)
-
-    df = pd.DataFrame(dataset[picks])
-    display(HTML(df.to_html()))
 
 # %cd /content/drive/MyDrive/SLU_hackathon/SLU_dataset/spoken-norm-taggen
 
@@ -78,9 +62,6 @@ answer_text = map(reformat, get_spoken_norm(text_data))
 answer_text = list(answer_text)
 
 """# Tokenize #"""
-
-# Commented out IPython magic to ensure Python compatibility.
-# %cd /content/drive/MyDrive/SLU_hackathon/tokenizer/
 
 from UITws_v1 import UITws_v1
 uitws_v1 = UITws_v1('base_sep_sfx.pkl')
@@ -156,12 +137,7 @@ def reformat_answer(ans):
     return result
 entities = [list(map(reformat_answer, answer)) for answer in answers]
 
-# Commented out IPython magic to ensure Python compatibility.
-# %cd /content/drive/MyDrive/SLU_hackathon/
-
 import pandas as pd
-
-# entities = json.load(open("/content/drive/MyDrive/SLU_hackathon/entities_newst_est.json"))
 
 final_result = pd.DataFrame()
 final_result['intent'] = revert(y_pred)
@@ -169,7 +145,3 @@ final_result['entities'] = entities
 final_result['file'] = files
 with open('predictions.jsonl', 'w', encoding='utf-8') as file:
     final_result.to_json(file, orient = 'records', lines = True, force_ascii=False)
-# final_result.to_json('predictions.jsonl', orient = 'records', lines = True)
-
-# import IPython.display as ipd
-# ipd.Audio(data=np.asarray(data[4]['audio']["array"]), autoplay=True, rate=16000)
