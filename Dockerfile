@@ -19,4 +19,15 @@ RUN apt-get autoremove -y && apt-get clean && \
 
 RUN git lfs install && \
     git clone https://huggingface.co/Chiizu/wav2vec2-base-vi-vlsp2020-demo && \
-    git clone https://huggingface.co/anhtu77/videberta-base-finetuned-ner-2
+    git clone https://huggingface.co/anhtu77/videberta-base-finetuned-ner-2 && \
+    git clone https://github.com/Trashists/spoken-norm-taggen.git
+
+WORKDIR /spoken-norm-taggen
+
+RUN curl -O http://27.71.27.81:3344/SLU-20230922T151745Z-001.zip
+RUN unzip SLU-20230922T151745Z-001.zip
+
+WORKDIR /SLU
+ADD tokenizer ./tokenizer
+COPY test.py ./test.py
+RUN python test.py
